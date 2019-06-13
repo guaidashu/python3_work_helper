@@ -7,7 +7,6 @@ from tool.lib.function import debug
 class HandleInsomniaMusicService(object):
     def __init__(self, init_db=None):
         self.db = init_db("INSOMNIA_MUSIC_DATABASE_CONFIG")
-        debug(self.db.table_prefix)
 
     def __del__(self):
         self.db.closeDB()

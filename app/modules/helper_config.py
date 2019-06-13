@@ -40,7 +40,6 @@ class HelperConfig(HelperContext):
         """
         if not config:
             config = "MYSQL_CONFIG"
-        print(self.config[config].setdefault("MYSQL_TABLE_PREFIX", HelperConfig.DEFAULT_CONFIG["MYSQL_TABLE_PREFIX"]))
         self._db = DBConfig(
             username=self.config[config].setdefault("MYSQL_USERNAME", HelperConfig.DEFAULT_CONFIG["MYSQL_USERNAME"]),
             password=self.config[config].setdefault("MYSQL_PASSWORD",
