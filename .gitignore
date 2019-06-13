@@ -5,3 +5,4 @@ Pipfile
 .idea
 static
 Pipfile.lock
+config/secure.py

@@ -11,4 +11,4 @@ class Helper(HelperConfig):
 
     @property
     def handle_insomnia_music(self):
-        return HandleInsomniaMusicService(self.db, self.init_db)
+        return HandleInsomniaMusicService(self.init_db)

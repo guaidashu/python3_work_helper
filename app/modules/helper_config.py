@@ -13,7 +13,8 @@ class HelperConfig(HelperContext):
         "MYSQL_USERNAME": "root",
         "MYSQL_PASSWORD": "root",
         "MYSQL_HOST": "127.0.0.1",
-        "MYSQL_PORT": "3306"
+        "MYSQL_PORT": "3306",
+        "MYSQL_TABLE_PREFIX": 1
     }
 
     def __init__(self, **kwargs):
@@ -39,6 +40,7 @@ class HelperConfig(HelperContext):
         """
         if not config:
             config = "MYSQL_CONFIG"
+        print(self.config[config].setdefault("MYSQL_TABLE_PREFIX", HelperConfig.DEFAULT_CONFIG["MYSQL_TABLE_PREFIX"]))
         self._db = DBConfig(
             username=self.config[config].setdefault("MYSQL_USERNAME", HelperConfig.DEFAULT_CONFIG["MYSQL_USERNAME"]),
             password=self.config[config].setdefault("MYSQL_PASSWORD",
@@ -46,7 +48,9 @@ class HelperConfig(HelperContext):
             database=self.config[config].setdefault("MYSQL_DATABASE",
                                                     HelperConfig.DEFAULT_CONFIG["MYSQL_DATABASE"]),
             host=self.config[config].setdefault("MYSQL_HOST", HelperConfig.DEFAULT_CONFIG["MYSQL_HOST"]),
-            port=self.config[config].setdefault("MYSQL_PORT", HelperConfig.DEFAULT_CONFIG["MYSQL_PORT"])
+            port=self.config[config].setdefault("MYSQL_PORT", HelperConfig.DEFAULT_CONFIG["MYSQL_PORT"]),
+            table_prefix=self.config[config].setdefault("MYSQL_TABLE_PREFIX",
+                                                        HelperConfig.DEFAULT_CONFIG["MYSQL_TABLE_PREFIX"])
         )
         return self._db
 
