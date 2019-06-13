@@ -30,7 +30,7 @@ class HelperConfig(HelperContext):
     def db(self):
         return self._db
 
-    def init_db_config(self, config=None):
+    def init_db(self, config=None):
         """
         初始化数据库设置
         init db config
@@ -48,6 +48,7 @@ class HelperConfig(HelperContext):
             host=self.config[config].setdefault("MYSQL_HOST", HelperConfig.DEFAULT_CONFIG["MYSQL_HOST"]),
             port=self.config[config].setdefault("MYSQL_PORT", HelperConfig.DEFAULT_CONFIG["MYSQL_PORT"])
         )
+        return self._db
 
     def make_config(self):
         """
