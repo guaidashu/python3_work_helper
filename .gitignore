@@ -3,3 +3,4 @@ tool/**
 **/__pycache__
 Pipfile
 .idea
+static
