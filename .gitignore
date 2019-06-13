@@ -4,3 +4,4 @@ tool/**
 Pipfile
 .idea
 static
+Pipfile.lock
