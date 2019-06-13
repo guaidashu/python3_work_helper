@@ -1,7 +1,8 @@
 """
 author songjie
 """
-from tool.lib.function import debug
+from app import create_helper
 
 if __name__ == "__main__":
-    debug("ok")
+    helper = create_helper()
+    helper.handle_insomnia_music.run()
