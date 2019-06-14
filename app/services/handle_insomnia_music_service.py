@@ -1,6 +1,8 @@
 """
 author songjie
 """
+from pydub.utils import mediainfo
+
 from app.libs.get_file_info import GetFileInfo
 from tool.lib.function import debug
 from tool.lib.thread import Thread
@@ -22,11 +24,25 @@ class HandleInsomniaMusicService(Thread):
         get_file_info = GetFileInfo("/Volumes/资料/insomnia_music/music_final", "", level=2)
         return get_file_info.get_file_list()
 
-    def get_music_list(self):
-        pass
-
     def handle(self, item):
-        self.start_thread(item["file_list"], self.__handle, is_test=True, )
+        self.start_thread(item["file_list"], self.__handle, is_test=False, path=item["path"], name=item["dir_name"])
 
-    def __handle(self, item):
-        debug(item)
+    def __handle(self, item, path, name):
+        music_time = self.__get_music_time(path + name + "/" + item)
+        debug(music_time)
+
+    def __get_music_time(self, path):
+        song = mediainfo(path)
+        music_time = float(song["duration"])
+        debug(music_time)
+        music_time = int(music_time + 0.5)
+        minutes = self.__get_minutes(music_time)
+        time = {
+            "second": music_time,
+            "minutes": minutes
+        }
+        return time
+
+    def __get_minutes(self, music_time):
+        s = str(music_time // 60) + ":" + str(music_time % 60)
+        return s
