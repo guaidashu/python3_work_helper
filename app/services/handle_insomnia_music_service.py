@@ -16,7 +16,7 @@ class HandleInsomniaMusicService(Thread):
 
     def run(self):
         file_list = self.get_file_list()
-        debug(file_list)
+        self.start_thread(file_list["dir_list"], self.handle, is_test=True)
 
     def get_file_list(self):
         get_file_info = GetFileInfo("/Volumes/资料/insomnia_music/music_final", "", level=2)
@@ -25,5 +25,8 @@ class HandleInsomniaMusicService(Thread):
     def get_music_list(self):
         pass
 
-    def handle(self):
-        pass
+    def handle(self, item):
+        self.start_thread(item["file_list"], self.__handle, is_test=True, )
+
+    def __handle(self, item):
+        debug(item)
