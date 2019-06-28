@@ -2,6 +2,7 @@
 author songjie
 """
 from app.modules.helper_config import HelperConfig
+from app.services.change_file_name import ChangeFileName
 from app.services.handle_insomnia_music_service import HandleInsomniaMusicService
 from app.spider.get_images import GetImages
 
@@ -17,3 +18,7 @@ class Helper(HelperConfig):
     @property
     def get_images(self):
         return GetImages(self.init_db)
+
+    @property
+    def change_file_name(self):
+        return ChangeFileName(self.init_db)
