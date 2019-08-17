@@ -3,8 +3,7 @@ author songjie
 """
 import threading
 
-from tool.lib.function import debug, curl_data
-from tool.lib.thread import Thread
+from tool_yy import curl_data, debug, Thread
 
 lock = threading.RLock()
 

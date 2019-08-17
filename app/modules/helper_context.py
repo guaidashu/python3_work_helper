@@ -3,7 +3,7 @@ author songjie
 """
 from contextlib import contextmanager
 
-from tool.lib.function import debug
+from tool_yy import debug
 
 
 def default_callback(**kwargs):

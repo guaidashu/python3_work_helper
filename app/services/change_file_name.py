@@ -4,8 +4,7 @@ author songjie
 import re
 import threading
 
-from tool.lib.function import debug
-from tool.lib.thread import Thread
+from tool_yy import Thread
 
 lock = threading.RLock()
 
