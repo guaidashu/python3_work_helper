@@ -4,6 +4,7 @@ author songjie
 from app.modules.SpiderTest import SpiderTest
 from app.modules.helper_config import HelperConfig
 from app.services.change_file_name import ChangeFileName
+from app.services.game_spider import GameSpider
 from app.services.handle_insomnia_music_service import HandleInsomniaMusicService
 from app.services.pillow_test import PillowTest
 from app.services.socket_test import SocketTest
@@ -37,3 +38,7 @@ class Helper(HelperConfig):
     @property
     def spider_test(self):
         return SpiderTest()
+
+    @property
+    def game_spider(self):
+        return GameSpider()
