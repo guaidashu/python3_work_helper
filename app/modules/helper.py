@@ -41,4 +41,4 @@ class Helper(HelperConfig):
 
     @property
     def game_spider(self):
-        return GameSpider()
+        return GameSpider(self.init_db)
