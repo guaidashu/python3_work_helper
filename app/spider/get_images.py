@@ -11,7 +11,21 @@ lock = threading.RLock()
 class GetImages(Thread):
     def __init__(self, init_db=None):
         super().__init__()
-        self.db = init_db()
+        self.db = None
+        self.init_db = init_db
+        self.src_column = ""
+        self.aim_column = ""
+        self.condition = None
+        self.origin_table_name = ""
+        self.table_name = ""
+
+    def init(self, db_config_name, src_column, aim_column, origin_table_name, table_name, condition="status=0"):
+        self.db = self.init_db(db_config_name)
+        self.src_column = src_column
+        self.aim_column = aim_column
+        self.origin_table_name = origin_table_name
+        self.table_name = table_name
+        self.condition = condition
 
     def __del__(self):
         self.db.closeDB()
@@ -21,14 +35,14 @@ class GetImages(Thread):
 
     def handle(self):
         data = self.get_data()
-        self.get_images(data, "large", img_url="img_url_large")
+        self.get_images(data, "static/images/large")
 
-    def get_images(self, data, path, img_url, prefix=""):
-        self.start_thread(data, self.__get_images, path=path, img_url=img_url, prefix=prefix)
+    def get_images(self, data, path, prefix=""):
+        self.start_thread(data, self.__get_images, path=path, prefix=prefix)
 
-    def __get_images(self, item, path, img_url, prefix):
-        page_resource = self.get_page_resource(prefix + item[img_url])
-        with open("static/images/{path}/{id}.jpg".format(path=path, id=item['id']), "wb") as f:
+    def __get_images(self, item, path, prefix):
+        page_resource = self.get_page_resource(prefix + item[self.src_column])
+        with open("{path}/{id}.jpg".format(path=path, id=item['id']), "wb") as f:
             try:
                 page_resource = page_resource.encode("utf-8")
             except Exception as e:
@@ -39,7 +53,7 @@ class GetImages(Thread):
                 "status": 1
             }
             condition = ["id={id}".format(id=item['id'])]
-            self.__update_data(update_data, "list", condition)
+            self.__update_data(update_data, self.table_name, condition)
 
     @classmethod
     def get_page_resource(cls, url):
@@ -58,8 +72,8 @@ class GetImages(Thread):
 
     def get_data(self):
         data = self.db.select({
-            "table": "list",
-            "columns": ["id", "img_url", "img_url_large"],
-            "condition": ["status=0"]
+            "table": self.table_name,
+            "columns": ["id", self.src_column, self.aim_column],
+            "condition": [self.condition]
         }, is_close_db=False)
         return data
