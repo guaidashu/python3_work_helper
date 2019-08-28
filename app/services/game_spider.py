@@ -19,7 +19,9 @@ class GameSpider(Thread):
         self.db.close()
 
     def run(self):
-        self.distribution_category()
+        match = MatchCategoryByName(self)
+        match.run()
+        # self.distribution_category()
         # self.handle()
 
     def handle(self):
@@ -256,3 +258,54 @@ class GameImage:
     def handle(self):
         pass
         # self.__handle(data)
+
+
+class MatchCategoryByName:
+    def __init__(self, game_spider):
+        self.game_spider = game_spider
+
+    def __del__(self):
+        pass
+
+    def run(self):
+        self.handle()
+
+    def handle(self):
+        with open("static/files/category.txt", "rb") as f:
+            for line in f:
+                game_title = line.decode("utf-8").strip("\n")
+                self.__handle(game_title)
+            f.close()
+
+    def __handle(self, game_title):
+        """
+        具体逻辑处
+        :param game_title:
+        :return:
+        """
+        data = self.game_spider.db.select({
+            "table": "game",
+            "condition": [
+                "title like '%{title}%' and game_url not like '%youtube%' and game_url not like '%google%' and game_url != ''".format(
+                    title=game_title)],
+            # "columns": ['title', 'id']
+        }, get_all=False, is_close_db=False)
+        try:
+            del data['id']
+        except:
+            return
+        data['category'] = 9
+        data['title'] = game_title
+        # debug(data)
+        result = self.__insert(data)
+        if result != 0:
+            debug("数据存储 =====> 成功")
+        else:
+            debug("数据存储 =====> 失败")
+
+    def __insert(self, insert_arr):
+        lock.acquire()
+        sql = self.game_spider.db.getInsertSql(insert_arr, "game_new")
+        result = self.game_spider.db.insert(sql, is_close_db=False)
+        lock.release()
+        return result
