@@ -6,3 +6,4 @@ Pipfile
 static
 Pipfile.lock
 config/secure.py
+fonts/**

@@ -134,6 +134,8 @@ class DrawImage(HelperContext):
         if width is None:
             width = self.width
         length = len(content)
+        if length == 0:
+            return
         content_size = self.get_font_size(content)
         content_width = content_size[0]
         single_width = int(content_width / length)

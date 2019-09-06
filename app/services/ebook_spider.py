@@ -290,8 +290,11 @@ class GetCoverImage(Thread, HelperContext):
             if not os.path.exists(tmp_dir):
                 os.mkdir(tmp_dir)
             filename = self.dir + "{filename}.epub".format(filename=item['id'])
-            self.__unzip(filename, tmp_dir)
-            self.__get_cover(tmp_dir, item)
+            try:
+                self.__unzip(filename, tmp_dir)
+                self.__get_cover(tmp_dir, item)
+            except Exception as e:
+                self.draw_cover(item)
             shutil.rmtree(tmp_dir)
 
     def __get_cover(self, tmp_dir, item):
