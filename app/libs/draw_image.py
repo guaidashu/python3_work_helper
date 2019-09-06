@@ -2,7 +2,6 @@
 Create by yy on 2019-09-05
 """
 from PIL import ImageFont, Image, ImageDraw
-from tool_yy import debug
 from tool_yy.lib.helper_context import HelperContext
 
 
@@ -41,8 +40,6 @@ class DrawImage(HelperContext):
         :param color:
         :return:
         """
-        if new_mode == 1:
-            image = Image.new(mode, size, color)
         if new_mode == 2:
             fp = kwargs.setdefault("path", "")
             if fp == "":
@@ -51,6 +48,8 @@ class DrawImage(HelperContext):
             if open_mode == "":
                 open_mode = "r"
             image = Image.open(fp, open_mode)
+        else:
+            image = Image.new(mode, size, color)
         return DrawImage(image, **kwargs)
 
     @property

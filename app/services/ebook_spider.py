@@ -4,7 +4,6 @@ Create by yy on 2019-08-26
 import os
 import threading
 
-from PIL import Image, ImageFont, ImageDraw
 from bs4 import BeautifulSoup
 from tool_yy import debug, curl_data, Thread
 
@@ -26,6 +25,7 @@ class EBookSpider(Thread):
     def __init__(self, init_db):
         super().__init__()
         self.db = init_db("EBOOK_DATABASE_CONFIG")
+        self.table = "book"
         self.url_prefix = "https://www.gutenberg.org"
         self.dict = {
             "Author": ['author', '作者获取出错', self.__get_tr_data],
@@ -61,11 +61,13 @@ class EBookSpider(Thread):
         self.db.close()
 
     def run(self):
-        get_cover_image = GetCoverImage(self)
-        get_cover_image.run()
+        # self.handle()
         # download_ebook = DownloadEBook(self)
         # download_ebook.run()
-        # self.handle()
+        # get_cover_image = GetCoverImage(self)
+        # get_cover_image.run()
+        divide_category = DivideCategory(self)
+        divide_category.run()
 
     def handle(self):
         data = self.__get_page_data()
@@ -262,7 +264,7 @@ class DownloadEBook(Thread, HelperContext):
 
     def get_data(self):
         data = self.ebook_spider.db.select({
-            "table": "book",
+            "table": self.ebook_spider.table,
             "columns": ["id", "source_url", "title"]
         }, is_close_db=False)
         return data
@@ -350,8 +352,44 @@ class GetCoverImage(Thread, HelperContext):
 
     def get_data(self):
         data = self.ebook_spider.db.select({
-            "table": "book",
+            "table": self.ebook_spider.table,
             "columns": ["id", "title", "author"],
             # "limit": [0, 10]
         }, is_close_db=False)
         return data
+
+
+class DivideCategory(Thread):
+    def __init__(self, ebook_spider):
+        super().__init__()
+        self.ebook_spider = ebook_spider
+
+    def run(self):
+        self.handle()
+
+    def handle(self):
+        data = self.get_data()
+        self.start_thread(data, self.__handle, is_test=False)
+
+    def __handle(self, item):
+        update_arr = dict()
+        update_arr['category_id'] = self.__get_category_id(item['id'])
+        self.__update(update_arr, item['id'])
+
+    def __update(self, update_arr, book_id):
+        lock.acquire()
+        self.ebook_spider.db.update({
+            "table": self.ebook_spider.table,
+            "condition": ["id={book_id}".format(book_id=book_id)],
+            "set": update_arr
+        }, is_close_db=False)
+        lock.release()
+
+    def __get_category_id(self, book_id):
+        return book_id % 6 + 1
+
+    def get_data(self):
+        return self.ebook_spider.db.select({
+            "table": self.ebook_spider.table,
+            "columns": ["id"],
+        }, is_close_db=False)
