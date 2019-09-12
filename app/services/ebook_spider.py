@@ -64,10 +64,10 @@ class EBookSpider(Thread):
         # self.handle()
         # download_ebook = DownloadEBook(self)
         # download_ebook.run()
-        # get_cover_image = GetCoverImage(self)
-        # get_cover_image.run()
-        divide_category = DivideCategory(self)
-        divide_category.run()
+        get_cover_image = GetCoverImage(self)
+        get_cover_image.run()
+        # divide_category = DivideCategory(self)
+        # divide_category.run()
 
     def handle(self):
         data = self.__get_page_data()
@@ -312,14 +312,25 @@ class GetCoverImage(Thread, HelperContext):
         data = BeautifulSoup(data, "html.parser")
         meta = data.find(name="meta", attrs={"name": "cover"})
         if meta is None:
-            debug("此电子书 ============================>  无cover图片，自动绘制")
-            self.draw_cover(item)
+            debug("此电子书 ============================>  无cover图片，删除")
+            # self.draw_cover(item)
+            self.__delete(item)
+            os.remove(self.dir + item['id'] + ".epub")
             return
         find = data.find(name="item", attrs={"media-type": "image/jpeg"})
         cover_name = find.attrs['href']
         shutil.move(tmp_dir + "OEBPS/{img_path}".format(img_path=cover_name),
                     self.img_path + "{filename}{ext}".format(filename=item['id'], ext=os.path.splitext(cover_name)[1]))
         debug("id为 {filename} 的电子书封面图 =========>  获取完成".format(filename=item['id']))
+
+    def __delete(self, item):
+        lock.acquire()
+        result = self.ebook_spider.db.delete({
+            "table": "book",
+            "condition": ["id={epub_id}".format(epub_id=item['id'])]
+        }, is_close_db=False)
+        lock.release()
+        return result
 
     def draw_cover(self, item):
         """
