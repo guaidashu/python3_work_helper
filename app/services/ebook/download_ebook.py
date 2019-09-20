@@ -11,6 +11,7 @@ class DownloadEBook(Thread, HelperContext):
     def __init__(self, ebook_spider):
         super().__init__()
         self.ebook_spider = ebook_spider
+        self.url_prefix = self.ebook_spider.url_prefix
 
     def run(self):
         self.handle()
@@ -29,7 +30,7 @@ class DownloadEBook(Thread, HelperContext):
             debug("电子书：{title} ========> 已经存在， 跳过".format(title=item['title']))
             return
         with self.auto_handle_exception(error_callback=self.__error_callback, throw_exception_flag=True, item=item):
-            data = curl_data(item['source_url'])
+            data = curl_data(self.url_prefix + item['source_url'])
             with open("static/spider/epub/{filename}.epub".format(filename=item['id']), "wb") as f:
                 f.write(data)
                 f.close()

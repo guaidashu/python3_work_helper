@@ -197,17 +197,17 @@ class EBookSpider(Thread):
         获取书籍主页面数据
         :return:
         """
-        # try:
-        #     data = curl_data("https://www.gutenberg.org/browse/languages/es")
-        # except Exception as e:
-        #     data = ""
+        try:
+            data = curl_data("https://www.gutenberg.org/browse/languages/es")
+        except Exception as e:
+            data = ""
         #     debug("get index page data error: {error}".format(error=e))
         # with open("static/spider/ebook_index_page.html", "wb") as f:
         #     f.write(data.encode("utf-8"))
         #     f.close()
-        with open("static/spider/ebook_index_page.html", "rb") as f:
-            data = f.read().decode("utf-8")
-            f.close()
+        # with open("static/spider/ebook_index_page.html", "rb") as f:
+        #     data = f.read().decode("utf-8")
+        #     f.close()
         return data
 
     @classmethod

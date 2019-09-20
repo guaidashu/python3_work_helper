@@ -41,7 +41,10 @@ class GetCoverImage(Thread, HelperContext):
                 self.__unzip(filename, tmp_dir)
                 self.__get_cover(tmp_dir, item)
             except Exception as e:
-                self.draw_cover(item)
+                debug("此电子书 ============================>  无cover图片，删除")
+                # self.draw_cover(item)
+                self.__delete(item)
+                os.remove(self.dir + str(item['id']) + ".epub")
             shutil.rmtree(tmp_dir)
 
     def __get_cover(self, tmp_dir, item):
@@ -60,7 +63,7 @@ class GetCoverImage(Thread, HelperContext):
             debug("此电子书 ============================>  无cover图片，删除")
             # self.draw_cover(item)
             self.__delete(item)
-            os.remove(self.dir + item['id'] + ".epub")
+            os.remove(self.dir + str(item['id']) + ".epub")
             return
         find = data.find(name="item", attrs={"media-type": "image/jpeg"})
         cover_name = find.attrs['href']
