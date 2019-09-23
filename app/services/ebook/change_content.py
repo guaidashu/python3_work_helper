@@ -2,11 +2,16 @@
 Create by yy on 2019/9/16
 """
 import os
+import re
 import shutil
+import threading
 import zipfile
 
+from bs4 import BeautifulSoup
 from tool_yy import Thread, debug
 from tool_yy.lib.helper_context import HelperContext
+
+lock = threading.RLock()
 
 
 class ChangeContent(Thread, HelperContext):
@@ -60,19 +65,40 @@ class ChangeContent(Thread, HelperContext):
         :param filename:
         :return:
         """
-        debug("change content")
-        self.__change_content(tmp_dir, item, filename)
-        self.compression(tmp_dir, item)
+        result = self.__change_content(tmp_dir, item)
+        if not result:
+            return
+        # self.compression(tmp_dir, item)
 
-    def __change_content(self, tmp_dir, item, filename):
+    def __change_content(self, tmp_dir, item):
         """
         去除内容 子执行函数
         :param tmp_dir:
         :param item:
-        :param filename:
         :return:
         """
-        pass
+        filename = ""
+        tmp_dir = tmp_dir + "OEBPS/"
+        for name in os.listdir(tmp_dir):
+            if name.endswith("-0.htm.html"):
+                filename = tmp_dir + name
+                break
+        if filename == "":
+            return False
+        with open(filename, "rb") as f:
+            data = f.read().decode("utf-8")
+        bs4 = BeautifulSoup(data, "html.parser")
+        pgheader = bs4.find_all("div", attrs={"class": "pgheader"})
+        try:
+            unused = pgheader[0]
+            pattern = "<div class=\"pgmonospaced pgheader\">[\w\W]*?</div>"
+            data = re.sub(pattern, "", data)
+            with open("static/spider/epub/result/test.html", "wb") as f:
+                f.write(data.encode("utf-8"))
+            # debug(data)
+        except Exception as e:
+            debug(e)
+        return True
 
     def compression(self, tmp_dir, item):
         """
@@ -115,6 +141,20 @@ class ChangeContent(Thread, HelperContext):
             file.extractall(aim_dir)
             file.close()
 
+    def __delete(self, item):
+        """
+        删除数据
+        :param item:
+        :return:
+        """
+        lock.acquire()
+        result = self.ebook_spider.db.delete({
+            "table": "book",
+            "condition": ["id={epub_id}".format(epub_id=item['id'])]
+        }, is_close_db=False)
+        lock.release()
+        return result
+
     def get_data(self):
         """
         从数据库获取数据
@@ -123,6 +163,6 @@ class ChangeContent(Thread, HelperContext):
         data = self.ebook_spider.db.select({
             "table": self.ebook_spider.table,
             "columns": ["id", "title", "author"],
-            # "limit": [0, 10]
+            "limit": [0, 10]
         }, is_close_db=False)
         return data
