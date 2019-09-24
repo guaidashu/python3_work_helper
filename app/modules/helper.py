@@ -10,6 +10,7 @@ from app.services.game_spider import GameSpider
 from app.services.handle_insomnia_music_service import HandleInsomniaMusicService
 from app.services.pillow_test import PillowTest
 from app.services.socket_test import SocketTest
+from app.services.test_psql import TestPsql
 from app.spider.get_images import GetImages
 
 
@@ -62,3 +63,7 @@ class Helper(HelperConfig):
         :return:
         """
         return EBookSpider(self.init_db)
+
+    @property
+    def test_psql(self):
+        return TestPsql(self.psql)

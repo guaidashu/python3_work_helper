@@ -12,5 +12,5 @@ def create_helper():
     helper = Helper()
     helper.config.from_object("config.secure")
     helper.config.from_object("config.settings")
-    psql.init_helper(helper)
+    psql.init_helper(helper, False)
     return helper
