@@ -74,7 +74,7 @@ class GetCoverImage(Thread, HelperContext):
     def __delete(self, item):
         lock.acquire()
         result = self.ebook_spider.db.delete({
-            "table": "book",
+            "table": self.ebook_spider.table,
             "condition": ["id={epub_id}".format(epub_id=item['id'])]
         }, is_close_db=False)
         lock.release()

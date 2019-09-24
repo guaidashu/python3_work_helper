@@ -23,7 +23,8 @@ class EBookSpider(Thread):
     def __init__(self, init_db):
         super().__init__()
         self.db = init_db("EBOOK_DATABASE_CONFIG")
-        self.table = "book"
+        self.table = "book_de"
+        self.url = "https://www.gutenberg.org/browse/languages/de"
         self.url_prefix = "https://www.gutenberg.org"
         self.dict = {
             "Author": ['author', '作者获取出错', self.__get_tr_data],
@@ -145,7 +146,7 @@ class EBookSpider(Thread):
         :return:
         """
         lock.acquire()
-        sql = self.db.getInsertSql(insert_arr, "book")
+        sql = self.db.getInsertSql(insert_arr, self.table)
         result = self.db.insert(sql, is_close_db=False)
         self.language[threading.current_thread().name] = ""
         lock.release()
@@ -191,14 +192,13 @@ class EBookSpider(Thread):
         li_list = div.find_all(name="li")
         return li_list
 
-    @classmethod
-    def __get_page_data(cls):
+    def __get_page_data(self):
         """
         获取书籍主页面数据
         :return:
         """
         try:
-            data = curl_data("https://www.gutenberg.org/browse/languages/es")
+            data = curl_data(self.url)
         except Exception as e:
             data = ""
         #     debug("get index page data error: {error}".format(error=e))

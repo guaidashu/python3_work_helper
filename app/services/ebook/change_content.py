@@ -51,18 +51,17 @@ class ChangeContent(Thread, HelperContext):
         filename = self.dir + "{filename}.epub".format(filename=item['id'])
         try:
             self.__unzip(filename, tmp_dir)
-            self.change_content(tmp_dir, item, filename)
+            self.change_content(tmp_dir, item)
         except Exception as e:
             debug("change content error: {error}".format(error=e))
         shutil.rmtree(tmp_dir)
 
-    def change_content(self, tmp_dir, item, filename):
+    def change_content(self, tmp_dir, item):
         """
         去除内容 发起函数
         然后进行压缩
         :param tmp_dir:
         :param item:
-        :param filename:
         :return:
         """
         result = self.__change_content(tmp_dir, item)
@@ -202,7 +201,7 @@ class ChangeContent(Thread, HelperContext):
         """
         lock.acquire()
         result = self.ebook_spider.db.delete({
-            "table": "book",
+            "table": self.ebook_spider.table,
             "condition": ["id={epub_id}".format(epub_id=item['id'])]
         }, is_close_db=False)
         lock.release()
