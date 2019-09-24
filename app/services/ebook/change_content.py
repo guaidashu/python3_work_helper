@@ -37,7 +37,7 @@ class ChangeContent(Thread, HelperContext):
         :return:
         """
         data = self.get_data()
-        self.start_thread(data, self.__handle, is_test=True)
+        self.start_thread(data, self.__handle, is_test=False)
 
     def __handle(self, item):
         """
@@ -50,11 +50,11 @@ class ChangeContent(Thread, HelperContext):
             os.mkdir(tmp_dir)
         filename = self.dir + "{filename}.epub".format(filename=item['id'])
         try:
-            # self.__unzip(filename, tmp_dir)
+            self.__unzip(filename, tmp_dir)
             self.change_content(tmp_dir, item, filename)
         except Exception as e:
             debug("change content error: {error}".format(error=e))
-        # shutil.rmtree(tmp_dir)
+        shutil.rmtree(tmp_dir)
 
     def change_content(self, tmp_dir, item, filename):
         """
@@ -68,7 +68,7 @@ class ChangeContent(Thread, HelperContext):
         result = self.__change_content(tmp_dir, item)
         if not result:
             return
-        # self.compression(tmp_dir, item)
+        self.compression(tmp_dir, item)
 
     def __change_content(self, tmp_dir, item):
         """
@@ -77,8 +77,48 @@ class ChangeContent(Thread, HelperContext):
         :param item:
         :return:
         """
-        filename = ""
         tmp_dir = tmp_dir + "OEBPS/"
+        result = self.__change_0_html(tmp_dir, item)
+        if not result:
+            return False
+        result = self.__change_top_ncx(tmp_dir, item)
+        return result
+
+    def __change_top_ncx(self, tmp_dir, item):
+        """
+        改变目录页的内容
+        :param tmp_dir:
+        :return:
+        """
+        filename = ""
+        for name in os.listdir(tmp_dir):
+            if name.endswith("ncx"):
+                filename = tmp_dir + name
+                break
+        if filename == "":
+            return False
+        with open(filename, "rb") as f:
+            data = f.read().decode("utf-8")
+        bs4 = BeautifulSoup(data, "xml")
+        result = bs4.find_all("navPoint", attrs={"playOrder": "1"})
+        try:
+            result = result[0].find("text")
+            result = str(result)
+            debug(result + " ============>    " + "<text>{title}</text>".format(title=item['title']))
+            data = re.sub(result, "<text>{title}</text>".format(title=item['title']), data)
+        except Exception as e:
+            debug(e)
+        with open(filename, "wb") as f:
+            f.write(data.encode("utf-8"))
+        return True
+
+    def __change_0_html(self, tmp_dir, item):
+        """
+        改变第一页的内容
+        :param tmp_dir:
+        :return:
+        """
+        filename = ""
         for name in os.listdir(tmp_dir):
             if name.endswith("-0.htm.html"):
                 filename = tmp_dir + name
@@ -92,12 +132,25 @@ class ChangeContent(Thread, HelperContext):
         try:
             unused = pgheader[0]
             pattern = "<div class=\"pgmonospaced pgheader\">[\w\W]*?</div>"
-            data = re.sub(pattern, "", data)
-            with open("static/spider/epub/result/test.html", "wb") as f:
-                f.write(data.encode("utf-8"))
-            # debug(data)
+            data = re.sub(pattern, "<div class=\"pgmonospaced pgheader\">{title}</div>".format(title=item['title']),
+                          data)
         except Exception as e:
             debug(e)
+        top_note = bs4.find_all("table", attrs={"summary": "note"})
+        try:
+            unused = top_note[0]
+            pattern = "<table[\w\W]*?>[\w\W]*?</table>"
+            data = re.sub(pattern, "", data)
+        except Exception as e:
+            debug(e)
+        try:
+            pattern = "<a tag=\"[\w\W]*?\"/>"
+            data = re.sub(pattern, "", data)
+            pattern = "<a tag=\"[\w\W]*?\">[\w\W]*?</a>"
+        except Exception as e:
+            debug(e)
+        with open(filename, "wb") as f:
+            f.write(data.encode("utf-8"))
         return True
 
     def compression(self, tmp_dir, item):
@@ -163,6 +216,6 @@ class ChangeContent(Thread, HelperContext):
         data = self.ebook_spider.db.select({
             "table": self.ebook_spider.table,
             "columns": ["id", "title", "author"],
-            "limit": [0, 10]
+            # "limit": [0, 10]
         }, is_close_db=False)
         return data

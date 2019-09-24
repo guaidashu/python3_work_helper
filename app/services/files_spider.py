@@ -14,7 +14,7 @@ class FilesSpider(Thread):
 
     def run(self):
         # debug(md5(1567785699))
-        self.handle()
+        self.test()
 
     def handle(self):
         # url = "https://i.ytimg.com/vi/9OHkwJpS6u4/hqdefault.jpg?sqp=-oaymwEZCPYBEIoBSFXyq4qpAwsIARUAAIhCGAFwAQ==&rs=AOn4CLDEO8flAyYWStTIWI3aLoirwz73yg"
@@ -31,3 +31,8 @@ class FilesSpider(Thread):
         # with open("static/files/test.mp4", "wb") as f:
         #     f.write(data)
         #     f.close()
+
+    def test(self):
+        url = "https://www.crunchyroll.com/videos/anime/popular/ajax_page?pg=3"
+        data = curl_data(url, referer="https://www.crunchyroll.com/videos/anime/popular/ajax_page?pg=3", open_virtual_ip=True)
+        debug(data)

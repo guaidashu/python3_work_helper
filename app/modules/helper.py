@@ -14,6 +14,8 @@ from app.spider.get_images import GetImages
 
 
 class Helper(HelperConfig):
+    __slots__ = ("psql",)
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
