@@ -11,11 +11,12 @@ from app.services.handle_insomnia_music_service import HandleInsomniaMusicServic
 from app.services.pillow_test import PillowTest
 from app.services.socket_test import SocketTest
 from app.services.test_psql import TestPsql
+from app.services.test_redis import TestRedis
 from app.spider.get_images import GetImages
 
 
 class Helper(HelperConfig):
-    __slots__ = ("psql",)
+    __slots__ = ("psql", "redis")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -67,3 +68,7 @@ class Helper(HelperConfig):
     @property
     def test_psql(self):
         return TestPsql(self.psql)
+
+    @property
+    def test_redis(self):
+        return TestRedis(self.redis)

@@ -5,8 +5,9 @@ from app import create_helper
 
 if __name__ == "__main__":
     helper = create_helper()
+    helper.test_redis.run()
     # helper.ebook_spider.run()
-    helper.test_psql.run()
+    # helper.test_psql.run()
     # helper.game_spider.run()
     # helper.files_spider.run()
     # helper.pillow_test.run()
