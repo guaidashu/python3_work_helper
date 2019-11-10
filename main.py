@@ -1,7 +1,7 @@
 """
 author songjie
 """
-from app import create_helper
+import base64
 
 if __name__ == "__main__":
     helper = create_helper()
