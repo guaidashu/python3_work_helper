@@ -1,9 +1,10 @@
 """
 author songjie
 """
+from tool_yy.lib.db import DBConfig
+
 from app.modules.config import Config
 from app.modules.helper_context import HelperContext
-from tool.lib.db import DBConfig
 
 
 class HelperConfig(HelperContext):

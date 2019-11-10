@@ -6,3 +6,6 @@ Pipfile
 static
 Pipfile.lock
 config/secure.py
+fonts
+**/.DS_Store
+.DS_Store

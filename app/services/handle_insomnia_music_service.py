@@ -6,10 +6,9 @@ import shutil
 import threading
 
 from pydub.utils import mediainfo
+from tool_yy import Thread, debug
 
 from app.libs.get_file_info import GetFileInfo
-from tool.lib.function import debug
-from tool.lib.thread import Thread
 
 lock = threading.RLock()
 
