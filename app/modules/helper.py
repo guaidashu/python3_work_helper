@@ -13,6 +13,7 @@ from app.services.pillow_test import PillowTest
 from app.services.socket_test import SocketTest
 from app.services.test_psql import TestPsql
 from app.services.test_redis import TestRedis
+from app.services.xlrd_test import XlrdTest
 from app.spider.get_images import GetImages
 
 
@@ -77,3 +78,7 @@ class Helper(HelperConfig):
     @property
     def liuduoduo(self):
         return Liuduoduo()
+
+    @property
+    def xlrd_test(self):
+        return XlrdTest()
