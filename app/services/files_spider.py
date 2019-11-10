@@ -1,6 +1,9 @@
 """
 Create by yy on 2019-08-21
 """
+import time
+import urllib.parse
+
 from tool_yy import debug, Thread, curl_data, md5
 
 
@@ -13,8 +16,16 @@ class FilesSpider(Thread):
         pass
 
     def run(self):
+        time_stamp = int(time.time() * 1000)
+        debug(int(time_stamp))
+        url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx522d8304a0b93f75&redirect_uri=http%3A%2F%2Ffyxqx.fuyuxiangqi.cn%2Fwxtp%2FPageJumpServlet%2Fu94z6dI%3Ftxid%3Da62ab5bb-f5c9-4409-bb45-5bfc7af8f860%26id%3D9991c3cf-e669-459c-9f13-e5874f244a10%26type%3Duser%26upId%3Ddb4ce741-25d7-4d1e-93c5-de938d7ce24f%26askPage%3D1%26t%3D1571304429611%26askType%3D0%26ymdomain%3Dfyxqt.fuyuxiangqi.cn%2Fwxtp%2F&response_type=code&scope=snsapi_userinfo&state=tdahui&connect_redirect=1"
+        result = urllib.parse.urlparse(url)
+        args = urllib.parse.parse_qs(result.query)
+        debug(args)
+        debug(urllib.parse.unquote(url))
+        call_back_url = "http://fyxqx.fuyuxiangqi.cn/wxtp/PageJumpServlet/u94z6dI?txid=a62ab5bb-f5c9-4409-bb45-5bfc7af8f860&id=9991c3cf-e669-459c-9f13-e5874f244a10&type=user&upId=db4ce741-25d7-4d1e-93c5-de938d7ce24f&askPage=1&t=1571304429611&askType=0&ymdomain=fyxqt.fuyuxiangqi.cn/wxtp/"
         # debug(md5(1567785699))
-        self.test()
+        # self.test()
 
     def handle(self):
         # url = "https://i.ytimg.com/vi/9OHkwJpS6u4/hqdefault.jpg?sqp=-oaymwEZCPYBEIoBSFXyq4qpAwsIARUAAIhCGAFwAQ==&rs=AOn4CLDEO8flAyYWStTIWI3aLoirwz73yg"

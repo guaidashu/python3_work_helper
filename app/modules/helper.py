@@ -8,6 +8,7 @@ from app.services.ebook_spider import EBookSpider
 from app.services.files_spider import FilesSpider
 from app.services.game_spider import GameSpider
 from app.services.handle_insomnia_music_service import HandleInsomniaMusicService
+from app.services.liuduoduo import Liuduoduo
 from app.services.pillow_test import PillowTest
 from app.services.socket_test import SocketTest
 from app.services.test_psql import TestPsql
@@ -72,3 +73,7 @@ class Helper(HelperConfig):
     @property
     def test_redis(self):
         return TestRedis(self.redis)
+
+    @property
+    def liuduoduo(self):
+        return Liuduoduo()
