@@ -4,7 +4,9 @@ Created by yy on 2019/11/10
 import re
 
 import xlrd
+import xlwt
 from tool_yy import debug
+from xlutils.copy import copy
 
 
 class XlrdTest(object):
@@ -13,8 +15,9 @@ class XlrdTest(object):
         init
         """
         self.aim_path = "static/excel/compare.xlsx"
-        self.origin_path = "static/excel/10142.xlsx"
+        self.origin_path = "static/excel/10142.xls"
         self.aim_excel_data = dict()
+        self.new_excel = None
 
     def __del__(self):
         pass
@@ -29,12 +32,15 @@ class XlrdTest(object):
         :return:
         """
         excel = xlrd.open_workbook(self.origin_path)
+        self.new_excel = copy(excel)
         # self.aim_excel_data = self.get_origin_name()
         sheet_list = excel.sheets()
-        for sheet in sheet_list:
-            self.__handle(sheet)
+        for k, sheet in enumerate(sheet_list):
+            debug(sheet.name)
+            self.__handle(sheet, self.new_excel.get_sheet(k))
+        self.new_excel.save("static/excel/new_excel.xls")
 
-    def __handle(self, sheet):
+    def __handle(self, sheet, new_sheet):
         """
         :param sheet: 当前操作的sheet表
         :return:
@@ -54,8 +60,7 @@ class XlrdTest(object):
             except:
                 name = list()
 
-            self.match(name, sheet, i)
-            break
+            self.match(name, new_sheet, i)
 
     def match(self, name_list, sheet, row_num):
         """
@@ -76,7 +81,8 @@ class XlrdTest(object):
                         tmp_case_num = tmp_case_num + "，" + self.aim_excel_data[name]
 
         debug("{name}: {data}".format(name=name_list, data=tmp_case_num))
-        sheet.put_cell(row_num, 3, 1, tmp_case_num, 0)
+        # workbook = xlwt.Worksheet
+        sheet.write(row_num, 3, tmp_case_num)
 
     def get_origin_name(self):
         """
