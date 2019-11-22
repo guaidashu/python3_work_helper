@@ -15,4 +15,5 @@ class SubscribeHttp(object):
 
     def run(self):
         url = 'http://dat.c4fungames.com/dm/at/lp'
-        curl_data(url)
+        data = curl_data(url)
+        debug(data)
