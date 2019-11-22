@@ -11,6 +11,7 @@ from app.services.handle_insomnia_music_service import HandleInsomniaMusicServic
 from app.services.liuduoduo import Liuduoduo
 from app.services.pillow_test import PillowTest
 from app.services.socket_test import SocketTest
+from app.services.subscribe_http import SubscribeHttp
 from app.services.test_psql import TestPsql
 from app.services.test_redis import TestRedis
 from app.services.xlrd_test import XlrdTest
@@ -82,3 +83,7 @@ class Helper(HelperConfig):
     @property
     def xlrd_test(self):
         return XlrdTest()
+
+    @property
+    def subscribe_http(self):
+        return SubscribeHttp()
