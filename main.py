@@ -5,7 +5,8 @@ from app import create_helper
 
 if __name__ == "__main__":
     helper = create_helper()
-    helper.subscribe_http.convert_content()
+    helper.delete_comment.run()
+    # helper.subscribe_http.convert_content()
     # helper.test_redis.run()
     # helper.liuduoduo.run()
     # helper.xlrd_test.run()

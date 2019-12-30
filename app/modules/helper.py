@@ -4,6 +4,7 @@ author songjie
 from app.modules.SpiderTest import SpiderTest
 from app.modules.helper_config import HelperConfig
 from app.services.change_file_name import ChangeFileName
+from app.services.delete_comment import DeleteComment
 from app.services.ebook_spider import EBookSpider
 from app.services.files_spider import FilesSpider
 from app.services.game_spider import GameSpider
@@ -87,3 +88,7 @@ class Helper(HelperConfig):
     @property
     def subscribe_http(self):
         return SubscribeHttp()
+
+    @property
+    def delete_comment(self):
+        return DeleteComment()
